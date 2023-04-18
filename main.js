@@ -1,7 +1,7 @@
 //Constantes del juego
 const COLUMNAS = 5;
 const FILAS = 5;
-const CANTIDAD_MINAS = 1;
+const CANTIDAD_MINAS = 2;
 
 //Variables con colores para los casilleros (NO se pudieron declarar como constantes ya que  la fn color sólo está definida para el setup y el draw)
 var COLOR_CASILLERO_CON_MINA;
@@ -43,7 +43,8 @@ function draw() {
     {
       if (tieneMinaCasillero(columnaPresionada,filaPresionada)){
         pintarCasillero(columnaPresionada,filaPresionada,COLOR_CASILLERO_CON_MINA)
-        perder();        
+        mostrarMinas();
+        perder();
       }
       else {
         pintarCasillero(columnaPresionada, filaPresionada, COLOR_CASILLERO_SIN_MINA); 
@@ -59,7 +60,8 @@ function draw() {
     hizoClick = false;  //Indico que ya "procesé" el click del usuario. NO modificar
   }
   if (ganoElJuego() == true){
-    ganar ()
+    mostrarMinas();
+    ganar ();
   }
 
 }
@@ -81,19 +83,42 @@ function ponerMinasTablero()
   for (let i=0; i<CANTIDAD_MINAS ;i++){
     let columna = Math.floor(Math.random()*COLUMNAS);
     let fila =Math.floor(Math.random()*FILAS);
-    ponerMinaCasillero(columna ,fila);
-    console.log (fila);
-    console.log (columna);
+    if (tieneMinaCasillero(columna,fila)==false){
+      ponerMinaCasillero(columna ,fila);
+      console.log (fila);
+      console.log (columna);
+    }
+      else{
+        i=i-1;
+      }
+    
   }
  
 }
 
 function mostrarMinas()
 {
-  // Modificar/completar
+  for (let i=0;i<FILAS*COLUMNAS;i++){
+    for (x=0;x<10;x++){
+      if (tieneMinaCasillero(i,x)){
+        pintarCasillero(i, x, COLOR_CASILLERO_CON_MINA); 
+      }
+    }
+  }
 }
 
 function contarMinasAlrededor(columna, fila)
 {
-  return 9;   //Esto hace que SIEMPRE cuente 9 minas alrededor. Modificar/completar
+  let cont = 0;
+  let array1 = [0, 1, 1, 1, 0, -1, -1, -1];
+  let array2 = [-1, -1, 0, 1, 1, 1, 0, -1];
+
+  for(let i=0; i<8; i++){
+    if(tieneMinaCasillero(columna+array1[i], fila+array2[i])){
+      cont++;
+    }
+  }
+
+
+  return cont;   //Esto hace que SIEMPRE cuente 9 minas alrededor. Modificar/completar
 }
